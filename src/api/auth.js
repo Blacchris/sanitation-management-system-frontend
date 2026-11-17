@@ -1,6 +1,47 @@
 const API_BASE = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '')
 const AUTH_PATH = '/api/v1/auth'
 
+/** @typedef {'EMAIL' | 'SMS'} OtpChannel */
+
+/** @typedef {Object} OrganizationRegistrationRequest
+ * @property {string} organizationName
+ * @property {string} [registrationNumber]
+ * @property {string} [description]
+ * @property {string} servicesDescription
+ * @property {string} contactEmail
+ * @property {string} contactPhone
+ * @property {string} businessAddress
+ * @property {OtpChannel} otpChannel
+ */
+
+/** @typedef {Object} RegistrationResponse
+ * @property {string} message
+ * @property {string} email
+ * @property {OtpChannel} channel
+ * @property {string} sentTo
+ * @property {number} otpExpiresInSeconds
+ */
+
+/** @typedef {{email: string}} ResendOtpRequest */
+
+/** @typedef {Object} OrganizationSummary
+ * @property {number} id
+ * @property {string} organizationName
+ * @property {string|null} registrationNumber
+ * @property {string} contactEmail
+ * @property {string} contactPhone
+ * @property {string} businessAddress
+ * @property {string} verificationStatus
+ * @property {boolean} acceptingRequests
+ */
+
+/** @typedef {Object} AuthResponse
+ * @property {string} tokenType
+ * @property {string} accessToken
+ * @property {number} expiresIn
+ * @property {{id: number, fullName: string, email: string, phone: string, role: 'CUSTOMER'|'ADMIN', accountStatus: string}} user
+ */
+
 async function request(path, payload) {
   let response
   try {
@@ -31,7 +72,15 @@ function fallbackMessage(status) {
   return 'We couldn’t complete that request. Please review your details and try again.'
 }
 
+/** @param {{fullName: string, email: string, phone: string, password: string, otpChannel: OtpChannel}} payload */
 export const registerCustomer = (payload) => request('/register/customer', payload)
+/** @param {OrganizationRegistrationRequest} payload @returns {Promise<RegistrationResponse>} */
 export const registerOrganization = (payload) => request('/register/organization', payload)
+/** @param {ResendOtpRequest} payload @returns {Promise<RegistrationResponse>} */
+export const resendOtp = (payload) => request('/register/resend-otp', payload)
+/** @param {{email: string, otp: string}} payload @returns {Promise<AuthResponse>} */
 export const verifyOtp = (payload) => request('/verify-otp', payload)
+/** @param {{email: string, otp: string}} payload @returns {Promise<OrganizationSummary>} */
+export const verifyOrganizationOtp = (payload) => request('/verify-otp/organization', payload)
+/** @param {{email: string, password: string}} payload @returns {Promise<AuthResponse>} */
 export const login = (payload) => request('/login', payload)

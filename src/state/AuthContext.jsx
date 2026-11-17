@@ -3,16 +3,28 @@ import { createContext, useContext, useMemo, useState } from 'react'
 const AuthContext = createContext(null)
 const STORAGE_KEY = 'sanitation.auth'
 
+/** @typedef {{tokenType: string, accessToken: string, expiresIn: number, user: {id: number, fullName: string, email: string, phone: string, role: 'CUSTOMER'|'ADMIN', accountStatus: string}}|null} AuthState */
+
 function readStoredAuth() {
-  try { return JSON.parse(sessionStorage.getItem(STORAGE_KEY) || 'null') } catch { return null }
+  try {
+    const stored = JSON.parse(sessionStorage.getItem(STORAGE_KEY) || 'null')
+    if (!stored) return null
+    if (!['CUSTOMER', 'ADMIN'].includes(stored.user?.role)) {
+      sessionStorage.removeItem(STORAGE_KEY)
+      return null
+    }
+    const { tokenType, accessToken, expiresIn, user } = stored
+    return { tokenType, accessToken, expiresIn, user }
+  } catch { return null }
 }
 
 export function AuthProvider({ children }) {
+  /** @type {[AuthState, (next: AuthState) => void]} */
   const [auth, setAuth] = useState(readStoredAuth)
   const value = useMemo(() => ({
     auth,
     authenticate(response) {
-      const next = { tokenType: response.tokenType, accessToken: response.accessToken, expiresIn: response.expiresIn, user: response.user, organization: response.organization ?? null }
+      const next = { tokenType: response.tokenType, accessToken: response.accessToken, expiresIn: response.expiresIn, user: response.user }
       try { sessionStorage.setItem(STORAGE_KEY, JSON.stringify(next)) } catch { /* Keep the signed-in state for this tab if storage is unavailable. */ }
       setAuth(next)
     },
