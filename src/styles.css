@@ -42,9 +42,9 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, a:focus-visib
 .truck-image-stage { position: relative; width: min(100%, 560px); aspect-ratio: 1.72; margin: -6px auto 0; }
 .truck-image-stage img { position: absolute; display: block; height: auto; object-fit: contain; }
 .intro-truck-main { 
-  z-index: 1; bottom: 10%;  left: -20%; width: 105%; filter: drop-shadow(0 8px 8px rgba(30, 49, 36, .12)); 
+  z-index: 1; bottom: 2%;  left: -20%; width: 120%; filter: drop-shadow(0 8px 8px rgba(30, 49, 36, .12)); 
 }
-.intro-truck-overlay { z-index: 2; top: 1; right: -25%; bottom: -62%; width: 110%; filter: drop-shadow(0 9px 8px rgba(30, 49, 36, .2)); }
+.intro-truck-overlay { z-index: 2; top: -10; right: -40%; bottom: -80%; width: 125%; filter: drop-shadow(0 9px 8px rgba(30, 49, 36, .2)); }
 .form-panel { min-width: 0; display: flex; justify-content: center; padding: 48px clamp(38px, 6vw, 82px); }
 .form-content { width: 100%; max-width: 450px; align-self: center; padding: 4px 0; }
 .form-content h2 { margin: 0 0 10px; color: #202a25; font: 700 27px/1.25 'Manrope', sans-serif; letter-spacing: -.8px; }
